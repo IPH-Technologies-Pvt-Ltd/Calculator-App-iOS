@@ -179,8 +179,6 @@ class CalculatorController: UIViewController {
         reloadBtn.tintColor = .white
     }
     
-    //MARK: - Main Code
-    
     @IBAction func equalsTap(_ sender: Any)
     {
         if numberString != "" {
