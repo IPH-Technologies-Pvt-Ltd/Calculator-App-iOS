@@ -63,5 +63,5 @@ The Calculator App was developed as a project for learning iOS development. We w
 
 ## Support
 
-If you have any questions, issues, or suggestions regarding the Calculator App, please contact iphtechnologies.com.
+If you have any questions, issues, or suggestions regarding the Calculator App, please contact www.iphtechnologies.com.
 
