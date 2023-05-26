@@ -37,6 +37,7 @@ class CalculatorController: UIViewController {
     @IBOutlet weak var lightBtn: UIButton!
     @IBOutlet weak var darkBtn: UIButton!
     
+    var  isDot = false
     var operationTap = false
     var numberString:String = ""
     var numberDoubleValue:String = ""
@@ -49,9 +50,8 @@ class CalculatorController: UIViewController {
         modeView.layer.shadowRadius = 10
         
         lightBtn.tintColor = .black
-        equalBtn.layer.borderWidth = 0.5
-        equalBtn.layer.borderColor = UIColor(red: 66.0/255.0, green: 218.0/255.0, blue: 186.0/255.0, alpha: 0.8).cgColor
-        equalBtn.layer.cornerRadius = 10
+        equalBtn.layer.borderColor = Colors.borderColor.equalBtncolor.cgColor
+        equalBtn.setBorder()
         
         clearAll()
         lightMode()
@@ -67,13 +67,12 @@ class CalculatorController: UIViewController {
     }
     
     @IBAction func darkMode(_ sender: Any) {
+        
         setBtnWhiteColor()
         setdarkmode ()
-        modeView.backgroundColor = UIColor(red: 35.0/255.0, green: 38.0/255.0, blue: 46.0/255.0, alpha: 1.0)
-        modeView.layer.borderWidth = 0.5
-        modeView.layer.borderColor = UIColor.darkGray.cgColor
-        screenView.backgroundColor = UIColor(red: 28.0/255.0, green: 31.0/255.0, blue: 39.0/255.0, alpha: 1.0)
-        mainView.backgroundColor = UIColor(red: 35.0/255.0, green: 38.0/255.0, blue: 46.0/255.0, alpha: 0.5)
+        modeView.setDarkModeView()
+        screenView.backgroundColor = Colors.backgroundColor.screenView
+        mainView.backgroundColor = Colors.backgroundColor.mainViewDarkMode
         displayNumber.textColor = .systemGray4
         calculatorResults.textColor = .white
         lightBtn.tintColor = .systemGray6
@@ -88,8 +87,8 @@ class CalculatorController: UIViewController {
         setLightmode ()
     }
     
-    
     func setdarkmode () {
+        
         zeroBtn.setDarkView()
         oneBtn.setDarkView()
         twoBtn.setDarkView()
@@ -132,24 +131,22 @@ class CalculatorController: UIViewController {
         percentBtn.setLightBorderView()
         clearBtn.setLightBorderView()
         backBtn.setLightBorderView()
-        
     }
     
     func lightMode() {
+        
         setBtnBlackColor()
-        modeView.backgroundColor = UIColor(red: 248.0/255.0, green: 248.0/255.0, blue: 248.0/255.0, alpha: 1.0)
-        modeView.layer.borderWidth = 0.5
-        modeView.layer.borderColor = UIColor.systemGray6.cgColor
-        modeView.layer.cornerRadius = 10
+        modeView.setLightModeView()
         screenView.backgroundColor = .white
         displayNumber.textColor = .black
         calculatorResults.textColor = .black
-        mainView.backgroundColor = UIColor(red: 248.0/255.0, green: 248.0/255.0, blue: 248.0/255.0, alpha: 1.0)
+        mainView.backgroundColor = Colors.backgroundColor.mainViewLightMode
         lightBtn.tintColor = .orange
         darkBtn.tintColor = .systemGray
     }
     
     func setBtnBlackColor() {
+        
         zeroBtn.tintColor = .black
         oneBtn.tintColor = .black
         twoBtn.tintColor = .black
@@ -165,6 +162,7 @@ class CalculatorController: UIViewController {
     }
     
     func setBtnWhiteColor() {
+        
         zeroBtn.tintColor = .white
         oneBtn.tintColor = .white
         twoBtn.tintColor = .white
@@ -179,115 +177,43 @@ class CalculatorController: UIViewController {
         reloadBtn.tintColor = .white
     }
     
-    @IBAction func equalsTap(_ sender: Any)
-    {
+    
+    @IBAction func equalsTap(_ sender: Any) {
+        
         if numberString != "" {
-            if(isValidInput())
-            {
+            
+            for ch in numberString {
+                if ch == "." {
+                    print("fsfsfg")
+                    isDot = true
+                    break
+                }
+            }
+            if isDot == true {
+                numberDoubleValue = numberString
+                isDot = false
+            } else {
                 numberDoubleValue = numberString + ".0"
-                   let checkedWorkingsForPercent = numberDoubleValue.replacingOccurrences(of: " % ", with: " * 0.01 * ")
-                    print(checkedWorkingsForPercent)
-                    
-                    let expression = NSExpression(format: checkedWorkingsForPercent)
-                    if  let result = expression.expressionValue(with: nil, context: nil) as? Double {
-                        let numberFormatter = NumberFormatter()
-                        numberFormatter.numberStyle = .decimal
-                        let formattedNumber = numberFormatter.string(from: NSNumber(value:result))
-                        calculatorResults.text = formattedNumber
-                    }
-                    else {
-                        print("failed")
-                    }
-                }
+                isDot = true
             }
-            else
-            {
-                let alert = UIAlertController(
-                    title: "Invalid Input",
-                    message: "Calculator unable to do math based on input",
-                    preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Okay", style: .default))
-                self.present(alert, animated: true, completion: nil)
+            let checkedForPercent = numberDoubleValue.replacingOccurrences(of: " % ", with: " * 0.01 * ")
+            let expression = NSExpression(format: checkedForPercent)
+            if  let result = expression.expressionValue(with: nil, context: nil) as? Double {
+                let numberFormatter = NumberFormatter()
+                numberFormatter.numberStyle = .decimal
+                let formattedNumber = numberFormatter.string(from: NSNumber(value:result))
+                calculatorResults.text = formattedNumber
             }
-    }
-    func isValidInput() ->Bool
-    {
-        var count = 0
-        var funcCharIndexes = [Int]()
-        
-        for char in numberString
-        {
-            if(specialCharacter(char: char))
-            {
-                funcCharIndexes.append(count)
+            else {
+                print("failed")
             }
-            count += 1
-        }
-        var previous: Int = -1
-        
-        for index in funcCharIndexes
-        {
-            if(index == 0)
-            {
-                return false
-            }
-            
-            if(index == numberString.count - 1)
-            {
-                return false
-            }
-            
-            if (previous != -1)
-            {
-                if(index - previous == 1)
-                {
-                    return false
-                }
-            }
-            previous = index
-        }
-        return true
-    }
-    
-    func specialCharacter (char: Character) -> Bool
-    {
-        if(char == "*")
-        {
-            return true
-        }
-        if(char == "/")
-        {
-            return true
-        }
-        if(char == "+")
-        {
-            return true
-        }
-        return false
-    }
-    
-    func formatResult(result: Double) -> String
-    {
-        if(result.truncatingRemainder(dividingBy: 1) == 0)
-        {
-            return String(format: "%.0f", result)
-        }
-        else
-        {
-            return String(format: "%.2f", result)
         }
     }
     
     func addStringValue(value: String)
     {
-        if (value == " % ") {
-            numberString = numberString + value
-            displayNumber.text = numberString
-        } else {
-      
-                numberString = numberString + value
-                displayNumber.text = numberString
-        }
+        numberString = numberString + value
+        displayNumber.text = numberString
     }
     
     @IBAction func operationTapped(_ sender: UIButton) {
