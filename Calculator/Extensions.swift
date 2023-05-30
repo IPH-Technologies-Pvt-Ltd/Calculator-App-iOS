@@ -2,7 +2,7 @@
 //  Extensions.swift
 //  Calculator
 //
-//  Created by iPHTech 29 on 24/05/23.
+//  Created by  IPH Technologies Pvt. Ltd on 24/05/23.
 //
 
 import Foundation
