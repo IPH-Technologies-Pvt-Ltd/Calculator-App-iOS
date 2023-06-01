@@ -17,7 +17,6 @@ extension UIView {
     func setDarkBorderView(borderColor: UIColor = Colors.borderColor.darkBorderView) {
         self.layer.borderColor = borderColor.cgColor
         setBorder()
-        setShadow()
     }
     
     func setLightView(borderColor: UIColor = Colors.borderColor.lightViewBorder) {
@@ -43,6 +42,7 @@ extension UIView {
         self.layer.borderColor = borderColor.cgColor
         setBorder()
     }
+    
     
     func setBorder( borderWidth: CGFloat = 1.5,
                     cornerRadius: CGFloat = 10.0) {

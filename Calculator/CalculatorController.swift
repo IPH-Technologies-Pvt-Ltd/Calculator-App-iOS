@@ -37,10 +37,8 @@ class CalculatorController: UIViewController {
     @IBOutlet weak var lightBtn: UIButton!
     @IBOutlet weak var darkBtn: UIButton!
     
-    var  isDot = false
     var operationTap = false
     var numberString:String = ""
-    var numberDoubleValue:String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +59,6 @@ class CalculatorController: UIViewController {
     func clearAll()
     {
         numberString = ""
-        numberDoubleValue = ""
         displayNumber.text = ""
         calculatorResults.text = ""
     }
@@ -182,23 +179,9 @@ class CalculatorController: UIViewController {
         
         if numberString != "" {
             
-            for ch in numberString {
-                if ch == "." {
-                    print("fsfsfg")
-                    isDot = true
-                    break
-                }
-            }
-            if isDot == true {
-                numberDoubleValue = numberString
-                isDot = false
-            } else {
-                numberDoubleValue = numberString + ".0"
-                isDot = true
-            }
-            let checkedForPercent = numberDoubleValue.replacingOccurrences(of: " % ", with: " * 0.01 * ")
+            let checkedForPercent = numberString.replacingOccurrences(of: " % ", with: " * 0.01 * ")
             let expression = NSExpression(format: checkedForPercent)
-            if  let result = expression.expressionValue(with: nil, context: nil) as? Double {
+            if  let result = expression.toFloatingPoint().expressionValue(with: nil, context: nil) as? Double {
                 let numberFormatter = NumberFormatter()
                 numberFormatter.numberStyle = .decimal
                 let formattedNumber = numberFormatter.string(from: NSNumber(value:result))
@@ -269,6 +252,7 @@ class CalculatorController: UIViewController {
         case 10:
             if numberString.count != 0 {
                 addStringValue(value: ".")
+                operationTap = true
             } else {
                 addStringValue(value: "0.")
             }
